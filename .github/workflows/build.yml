@@ -53,7 +53,7 @@ jobs:
 
           mkdir dist
           cp -rf target/release/c2rust* ./dist
-          tar -cJf c2rust-${{ matrix.target }}.tar.xz -C dist .
+          tar -czf c2rust-${{ matrix.target }}.tar.gz -C dist .
 
       - name: Upload
         uses: actions/upload-artifact@v4
