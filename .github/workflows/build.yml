@@ -49,6 +49,10 @@ jobs:
           llvm-config --version
           LLVM_CONFIG_PATH=llvm-config-15  cargo build -p c2rust -Z sparse-registry
 
+          mkdir dist
+          cp -rf target/release/c2rust* ./dist
+          tar -cJf c2rust-${{ matrix.target }}.tar.xz -C dist .
+
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
