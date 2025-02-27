@@ -33,7 +33,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          repository: https://github.com/immunant/c2rust
+          repository: immunant/c2rust
       - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           rustflags: '-A warnings'
