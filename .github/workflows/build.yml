@@ -1,0 +1,73 @@
+name: build
+
+permissions:
+  contents: write
+
+on:
+  push:
+    tags:
+      - "v*"
+    branches:
+      - "main"
+  pull_request:
+
+defaults:
+  run:
+    shell: bash --noprofile --norc -CeEuo pipefail {0}
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          # - target: x86_64-apple-darwin
+          #   os: macos-13
+          # - target: aarch64-apple-darwin
+          #   os: macos-latest
+          # - target: x86_64-pc-windows-gnu
+          #   os: windows-latest
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-24.04
+    runs-on: ${{ matrix.os }}
+    name: build-${{ matrix.target }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: https://github.com/immunant/c2rust
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          rustflags: '-A warnings'
+          toolchain: 'nightly-2022-08-08'
+      - name: install
+        run: |
+          sudo apt install build-essential llvm clang libclang-dev cmake libssl-dev pkg-config python3 git -y
+          sudo apt install llvm-15 clang-15 libclang-15-dev -y
+      - name: build-${{ matrix.target }}
+        run: |
+          cargo --version
+          rustc -Vv
+          llvm-config --version
+          LLVM_CONFIG_PATH=llvm-config-15  cargo build -p c2rust -Z sparse-registry
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: c2rust-${{ matrix.target }}
+          path: ./c2rust-${{ matrix.target }}.tar.gz
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download All Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: c2rust
+          pattern: c2rust*
+          merge-multiple: true
+
+      - name: release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "c2rust/*.tar.gz"
