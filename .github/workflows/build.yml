@@ -34,10 +34,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: immunant/c2rust
-      - uses: actions-rust-lang/setup-rust-toolchain@v1
-        with:
-          rustflags: '-A warnings'
-          toolchain: 'nightly'
+      - uses: actions-rust-lang/setup-rust-toolchain@v2
       - name: install
         run: |
           sudo apt install build-essential llvm clang libclang-dev cmake libssl-dev pkg-config python3 git -y
