@@ -71,5 +71,6 @@ jobs:
 
       - name: release
         uses: ncipollo/release-action@v1
+        tag: nightly
         with:
           artifacts: "c2rust/*.tar.gz"
