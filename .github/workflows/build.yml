@@ -75,7 +75,6 @@ jobs:
         with:
           artifacts: "c2rust/*.tar.gz"
           allowUpdates: true
-          tag: "nightly"
           name: "nightly"
           token: ${{ secrets.GITHUB_TOKEN }}
           commit: main
